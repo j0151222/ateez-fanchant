@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ATEEZ · 應援練習室</title>
+<meta name="theme-color" content="#0B0C0F">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Oswald:wght@500;700&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0C0F; --card:#14161B; --card2:#1B1E24; --ink:#F1EFEA; --sub:#8E939B; --line:#262A31; --soft:#20232A;
+  --accent:#CFE0E8; --accent2:#7FD6EE; --accent-ink:#0B0C0F; --call:#7FD6EE;
+  color-scheme:dark;
+}
+body[data-era="crash"]   {--accent:#CFE0E8;--accent2:#7FD6EE}
+body[data-era="golden"]  {--accent:#F6B85C;--accent2:#FF7A45}
+body[data-era="world"]   {--accent:#C6F432;--accent2:#FF4D3D}
+body[data-era="fever"]   {--accent:#FF5A5F;--accent2:#FFB199}
+body[data-era="treasure"]{--accent:#E9C46A;--accent2:#5EC3E6}
+
+*{box-sizing:border-box}
+html{scroll-padding-top:calc(64px + env(safe-area-inset-top,0px))}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC",system-ui,sans-serif;line-height:1.6}
+body{padding-bottom:env(safe-area-inset-bottom,0);
+  background:radial-gradient(1200px 600px at 85% -10%,color-mix(in srgb,var(--accent2) 18%,transparent),transparent 60%),var(--bg);
+  transition:background .8s}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;opacity:.07;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+a{color:inherit}
+button{font-family:inherit}
+button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.skip{position:absolute;left:-999px}.skip:focus{left:12px;top:12px;z-index:99;background:var(--card);padding:6px 10px}
+.serif{font-family:"Instrument Serif",Georgia,serif;font-style:italic;font-weight:400}
+
+/* ---------- 上方列 ---------- */
+.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0)}
+.top .in{max-width:1220px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 20px}
+.brand{font-family:Oswald,sans-serif;font-weight:700;font-size:20px;letter-spacing:.06em;text-decoration:none;display:flex;align-items:center;gap:10px}
+.brand::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 14px var(--accent)}
+.brand span{font-weight:500;color:var(--sub);font-size:12px;letter-spacing:.28em}
+.top nav{display:flex;gap:18px;font-size:14px}
+.top nav a,.top nav button{color:var(--sub);text-decoration:none;background:none;border:0;cursor:pointer;font-size:14px;padding:0}
+.top nav a:hover,.top nav button:hover{color:var(--accent)}
+
+main{max-width:1220px;margin:0 auto;padding:0 20px 60px}
+
+/* ---------- 開頭：夕陽、羅盤與碎玻璃 ---------- */
+.intro{position:relative;padding:56px 0 34px;min-height:340px;overflow:hidden}
+.intro .kicker{font-family:Oswald,sans-serif;font-size:13px;letter-spacing:.32em;color:var(--accent)}
+.intro h1{margin:10px 0 0;font-family:Oswald,"Noto Sans TC",sans-serif;font-weight:700;text-transform:uppercase;
+  font-size:clamp(48px,10vw,128px);line-height:.88;letter-spacing:-.01em;position:relative;z-index:2}
+.intro h1 .out{color:transparent;-webkit-text-stroke:1.5px var(--ink)}
+.intro h1 .serif{text-transform:none;font-size:.55em;color:var(--accent);letter-spacing:0;margin-left:.1em}
+.intro p{margin:18px 0 0;color:var(--sub);max-width:30em;position:relative;z-index:2}
+.note{display:inline-block;margin-top:14px;font-size:12px;color:var(--sub);border:1px solid var(--line);padding:3px 12px;border-radius:99px;position:relative;z-index:2}
+.art{position:absolute;right:-40px;top:10px;width:min(56%,560px);aspect-ratio:1;pointer-events:none}
+.art .sun{position:absolute;inset:18%;border-radius:50%;
+  background:radial-gradient(circle at 50% 40%,var(--accent) 0%,var(--accent2) 55%,transparent 72%);opacity:.75;filter:blur(2px);transition:background .8s}
+.art .horizon{position:absolute;left:0;right:0;top:58%;height:42%;
+  background:repeating-linear-gradient(180deg,var(--bg) 0 6px,transparent 6px 14px);mask:linear-gradient(180deg,#000,transparent)}
+.art svg{position:absolute;inset:0;width:100%;height:100%}
+.art .ring{fill:none;stroke:var(--ink);stroke-opacity:.18}
+.art .tick{stroke:var(--ink);stroke-opacity:.35}
+.art .rot{transform-origin:50% 50%;animation:spin 80s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#introArt polygon{fill:color-mix(in srgb,var(--ink) 6%,transparent);stroke:var(--ink);stroke-opacity:.5;stroke-width:1}
+#introArt polyline{fill:none;stroke:var(--ink);stroke-opacity:.25;stroke-width:1}
+@media (max-width:700px){.art{opacity:.45;width:90%;right:-30%}}
+
+/* 跑馬燈 */
+.marquee{overflow:hidden;border-block:1px solid var(--line);margin:0 -20px 26px;padding:10px 0;white-space:nowrap}
+.marquee div{display:inline-block;animation:mq 38s linear infinite;font-family:Oswald,sans-serif;letter-spacing:.2em;font-size:14px;color:var(--sub)}
+.marquee b{color:var(--accent);font-weight:500;margin:0 .6em}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px}
+.label{font-family:Oswald,sans-serif;font-size:12px;letter-spacing:.28em;color:var(--accent)}
+h2{margin:2px 0 0;font-size:24px;font-weight:900}
+
+/* ---------- 歌單：登船券 ---------- */
+.playlist{padding:24px;background:transparent;border:0}
+.pl-head{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap}
+.pl-head h2{font-family:Oswald,"Noto Sans TC",sans-serif;font-size:clamp(28px,4vw,40px);font-weight:700}
+.pl-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.search{position:relative}
+.search input{width:210px;padding:9px 14px 9px 32px;border:1px solid var(--line);border-radius:99px;background:var(--card);color:var(--ink);font:inherit;font-size:14px}
+.search::before{content:"⌕";position:absolute;left:12px;top:50%;transform:translateY(-52%);color:var(--sub)}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:7px 15px;font-size:13px;cursor:pointer;font-family:Oswald,"Noto Sans TC",sans-serif;letter-spacing:.06em}
+.chip:hover{border-color:var(--accent)}
+.chip.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.eras{display:flex;gap:6px;flex-wrap:wrap;margin:16px 0 6px}
+.songs{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin:14px 0 0;padding:0;list-style:none}
+.song{--c:var(--sub);position:relative;display:grid;grid-template-columns:58px 1fr;align-items:center;width:100%;text-align:left;
+  padding:0;border:0;border-radius:14px;background:var(--card);color:var(--ink);cursor:pointer;overflow:hidden;
+  transition:transform .2s,box-shadow .2s;
+  -webkit-mask:radial-gradient(circle 8px at 58px 0,#0000 98%,#000) top/100% 51% no-repeat,radial-gradient(circle 8px at 58px 100%,#0000 98%,#000) bottom/100% 51% no-repeat;
+          mask:radial-gradient(circle 8px at 58px 0,#0000 98%,#000) top/100% 51% no-repeat,radial-gradient(circle 8px at 58px 100%,#0000 98%,#000) bottom/100% 51% no-repeat}
+.song[data-era="crash"]{--c:#CFE0E8}.song[data-era="golden"]{--c:#F6B85C}.song[data-era="world"]{--c:#C6F432}
+.song[data-era="fever"]{--c:#FF5A5F}.song[data-era="treasure"]{--c:#E9C46A}
+.song:hover{transform:translateY(-2px)}
+.song .no{align-self:stretch;display:grid;place-items:center;font-family:Oswald,sans-serif;font-weight:700;font-size:22px;
+  color:var(--c);border-right:2px dashed var(--line)}
+.song .body{padding:12px 14px;min-width:0}
+.song b{display:block;font-size:15px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.song small{display:block;color:var(--sub);font-size:11px;font-family:Oswald,"Noto Sans TC",sans-serif;letter-spacing:.08em;margin-top:2px}
+.song .tag{position:absolute;right:12px;top:10px;font-size:11px;color:var(--c)}
+.song.active{background:linear-gradient(120deg,color-mix(in srgb,var(--c) 26%,var(--card)),var(--card) 70%);box-shadow:0 10px 30px -12px var(--c)}
+.song.active .no{color:var(--bg);background:var(--c);border-right-color:transparent}
+.pl-foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:16px;font-size:13px;color:var(--sub)}
+.pl-foot strong{color:var(--accent);font-family:Oswald,sans-serif;font-size:16px}
+
+/* ---------- 練習區 ---------- */
+#studio{margin-top:36px;scroll-margin-top:80px}
+.np{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.np h2{font-family:Oswald,"Noto Sans TC",sans-serif;font-weight:700;font-size:clamp(34px,6vw,64px);line-height:1;text-transform:uppercase;
+  background:linear-gradient(90deg,var(--ink) 30%,var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+.np .meta{color:var(--sub);font-size:13px;margin-top:8px;font-family:Oswald,"Noto Sans TC",sans-serif;letter-spacing:.08em}
+.np .meta i{font-style:normal;color:var(--bg);background:var(--accent);padding:2px 8px;border-radius:4px;margin-right:6px}
+.iconbtns{display:flex;gap:6px;align-items:center}
+.ib{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;font-size:18px;transition:.2s}
+.ib:hover{border-color:var(--accent);color:var(--accent)}
+.ib.on{color:#FF5A7A;border-color:#FF5A7A;box-shadow:0 0 16px -4px #FF5A7A}
+.ytlink{font-size:12px;color:var(--sub);margin-left:10px}
+
+.studio{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(310px,1fr);gap:20px;align-items:start}
+@media (max-width:900px){.studio{grid-template-columns:1fr}}
+
+.frame{position:relative;padding:10px}
+.frame::before,.frame::after{content:"";position:absolute;width:26px;height:26px;border:2px solid var(--accent);pointer-events:none;transition:border-color .8s}
+.frame::before{left:0;top:0;border-right:0;border-bottom:0}
+.frame::after{right:0;bottom:0;border-left:0;border-top:0}
+.stage{position:relative;aspect-ratio:16/9;background:#000;border-radius:8px;overflow:hidden}
+.stage iframe,#player{position:absolute;inset:0;width:100%;height:100%}
+.cover{position:absolute;inset:0;z-index:2;border:0;padding:0;cursor:pointer;background:#000 center/cover no-repeat;color:#fff}
+.cover::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.1),rgba(0,0,0,.75))}
+.cover span{position:absolute;z-index:1;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:10px;font-weight:700;letter-spacing:.04em}
+.cover span::before{content:"▶";display:grid;place-items:center;width:72px;height:72px;border-radius:50%;background:var(--accent);color:var(--bg);font-size:24px;padding-left:5px;
+  box-shadow:0 0 0 10px color-mix(in srgb,var(--accent) 25%,transparent);transition:transform .2s}
+.cover:hover span::before{transform:scale(1.08)}
+.cover small{position:absolute;z-index:1;left:16px;bottom:12px;font-family:Oswald,sans-serif;letter-spacing:.24em;font-size:11px;opacity:.85}
+.cover.hide{display:none}
+.overlay{position:absolute;left:4%;right:4%;bottom:15%;text-align:center;pointer-events:none;z-index:1}
+.overlay .now{font-weight:900;font-size:clamp(20px,4.4vw,52px);line-height:1.2;color:#fff;text-shadow:0 0 4px #000,0 0 14px #000,0 2px 0 #000}
+.overlay .now.call{color:var(--call)}
+.overlay.off{display:none}
+.stage.focus{position:fixed;inset:0;z-index:60;border-radius:0;aspect-ratio:auto;width:100vw;height:100dvh}
+.exitfocus{display:none;position:absolute;z-index:3;top:calc(10px + env(safe-area-inset-top,0));right:10px;background:rgba(0,0,0,.6);color:#fff;border:0;border-radius:99px;padding:6px 14px}
+.stage.focus .exitfocus,.stage:fullscreen .exitfocus{display:block}
+
+/* 控制列 */
+.transport{margin-top:14px;padding:16px 18px;background:linear-gradient(180deg,var(--card2),var(--card))}
+.prog{display:flex;align-items:center;gap:12px;font-family:Oswald,sans-serif;font-size:13px;color:var(--sub)}
+.prog input{flex:1;accent-color:var(--accent);height:4px}
+.ctl{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:12px}
+.btn{border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:99px;padding:8px 15px;font-size:14px;cursor:pointer;transition:.2s}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.play{width:54px;height:54px;padding:0;border-radius:50%;background:var(--accent);color:var(--bg);border:0;font-size:18px;
+  box-shadow:0 8px 24px -8px var(--accent)}
+.btn.play:hover{color:var(--bg);transform:scale(1.05)}
+.btn.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:99px;overflow:hidden;background:var(--soft)}
+.seg button{border:0;background:none;color:var(--sub);padding:8px 12px;font-size:13px;cursor:pointer;font-family:Oswald,"Noto Sans TC",sans-serif}
+.seg button.on{background:var(--ink);color:var(--bg)}
+.ab{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px;padding-top:14px;border-top:1px dashed var(--line);font-size:13px;color:var(--sub)}
+.ab b{color:var(--accent);font-family:Oswald,sans-serif;font-weight:500;font-size:15px}
+.keys{margin-top:12px;font-size:12px;color:var(--sub)}
+.keys kbd{font-family:ui-monospace,Menlo,monospace;background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:1px 6px;margin:0 2px;color:var(--ink)}
+
+/* 應援稿：航海日誌 */
+.script{display:flex;flex-direction:column;height:min(80vh,660px);position:sticky;top:80px;overflow:hidden;
+  background:linear-gradient(180deg,var(--card2),var(--card))}
+@media (max-width:900px){.script{position:static;height:480px}}
+.sc-head{padding:16px 18px 12px;border-bottom:1px solid var(--line)}
+.sc-head .ttl{font-family:Oswald,"Noto Sans TC",sans-serif;font-weight:700;font-size:22px}
+.sc-head .ttl .serif{color:var(--accent);font-size:.9em;margin-left:4px}
+.sc-head .row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px}
+.sc-list{flex:1;overflow:auto;padding:14px 10px 40vh;margin:0;list-style:none;scroll-behavior:smooth;
+  mask:linear-gradient(180deg,transparent,#000 8%,#000 85%,transparent)}
+.line{display:flex;gap:12px;padding:9px 12px;border-radius:12px;cursor:pointer;color:var(--sub);transition:color .25s,background .25s,transform .25s;transform-origin:left center}
+.line:hover{background:var(--soft)}
+.line time{font-family:Oswald,sans-serif;font-size:12px;padding-top:.35em;min-width:38px;opacity:.6}
+.line span{font-weight:700;transition:font-size .25s}
+.line.call span{color:var(--call)}
+.line.cur{background:color-mix(in srgb,var(--accent) 10%,transparent);transform:scale(1.03)}
+.line.cur time{color:var(--accent);opacity:1}
+.line.cur span{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.line.done{opacity:.4}
+.script[data-size="s"] .line span{font-size:15px}
+.script[data-size="m"] .line span{font-size:18px}
+.script[data-size="l"] .line span{font-size:23px}
+.script[data-size="s"] .line.cur span{font-size:18px}
+.script[data-size="m"] .line.cur span{font-size:22px}
+.script[data-size="l"] .line.cur span{font-size:28px}
+.sc-empty{flex:1;display:grid;place-items:center;text-align:center;padding:24px;color:var(--sub)}
+.sc-empty .comp{width:70px;height:70px;margin:0 auto 10px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;font-size:26px;color:var(--accent)}
+.sc-empty b{display:block;color:var(--ink);font-size:17px;margin:6px 0}
+.sc-foot{display:flex;justify-content:space-between;gap:6px;padding:10px 12px;border-top:1px solid var(--line)}
+.sc-foot .btn{padding:7px 12px;font-size:13px}
+
+/* 編輯 */
+details.edit{margin-top:28px}
+details.edit summary{cursor:pointer;padding:18px 22px;font-weight:900;font-size:17px;list-style:none;display:flex;justify-content:space-between;align-items:center}
+details.edit summary::after{content:"＋";color:var(--accent);font-size:20px}
+details.edit[open] summary::after{content:"－"}
+.ed{padding:0 22px 22px;display:grid;grid-template-columns:1fr 1.3fr;gap:22px}
+@media (max-width:900px){.ed{grid-template-columns:1fr}}
+.ed label{display:block;font-weight:700;font-size:14px;margin:14px 0 6px}
+.ed input,.ed textarea,.ed select{width:100%;font:inherit;font-size:15px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+.ed textarea{min-height:280px;font-family:ui-monospace,Menlo,monospace;font-size:14px;line-height:1.7}
+.hint{font-size:13px;color:var(--sub);margin:6px 0 0}
+.live{display:none;gap:8px;margin-top:12px}
+.live.show{display:flex}
+.live input{flex:1;font:inherit;font-size:17px;color:var(--ink);background:var(--bg);border:2px solid var(--accent);border-radius:12px;padding:10px 14px}
+.status{font-size:13px;color:var(--accent);min-height:1.4em;margin-top:8px}
+.warn{display:none;margin-top:12px;font-size:13px;background:#2A1710;color:#FFC9A8;border:1px solid #6B3420;border-radius:10px;padding:8px 12px}
+.warn.show{display:block}
+
+/* 頁尾與來源 */
+footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);font-size:13px;color:var(--sub);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+footer .big{display:block;font-family:Oswald,sans-serif;font-weight:700;font-size:clamp(40px,9vw,96px);line-height:1;color:transparent;-webkit-text-stroke:1px var(--line);width:100%;margin-bottom:12px}
+dialog{border:1px solid var(--line);border-radius:18px;background:var(--card);color:var(--ink);padding:22px;width:min(520px,92vw)}
+dialog::backdrop{background:rgba(0,0,0,.6);backdrop-filter:blur(4px)}
+dialog ul{padding-left:18px;max-height:50vh;overflow:auto}
+dialog li{margin:4px 0}
+dialog a:hover{color:var(--accent)}
+@media (prefers-reduced-motion:reduce){.sc-list{scroll-behavior:auto}.marquee div,.art .rot{animation:none}.line,.song{transition:none}}
+</style>
+</head>
+<body data-era="crash">
+<a class="skip" href="#studio">跳到練習區</a>
+
+<header class="top">
+  <div class="in">
+    <a class="brand" href="#">ATEEZ<span>PRACTICE ROOM</span></a>
+    <nav><a href="#playlist">歌曲</a><a href="#studio">練習區</a><button id="srcBtn">影片來源 ↗</button></nav>
+  </div>
+</header>
+
+<main>
+  <section class="intro">
+    <div class="art" aria-hidden="true">
+      <div class="sun"></div><div class="horizon"></div>
+      <svg viewBox="0 0 400 400">
+        <g class="rot">
+          <circle class="ring" cx="200" cy="200" r="190"/>
+          <circle class="ring" cx="200" cy="200" r="160" stroke-dasharray="2 6"/>
+          <g id="ticks"></g>
+        </g>
+      </svg>
+      <svg viewBox="0 0 400 220" id="introArt" style="top:20%;height:60%"></svg>
+    </div>
+    <div class="kicker">ATINY · FANCHANT PRACTICE</div>
+    <h1><span class="out">Fanchant</span><br>Room<span class="serif">for ATINY</span></h1>
+    <p>選一首歌，跟著官方應援教學與應援稿一起練。從寶藏出航，到黃金時刻，再到撞碎重來的這一次。</p>
+    <span class="note">非官方粉絲練習頁 · 應援內容以官方教學為準</span>
+  </section>
+  <div class="marquee" aria-hidden="true"><div id="mq"></div></div>
+
+  <section class="card playlist" id="playlist">
+    <div class="pl-head">
+      <div><div class="label">PLAYLIST · BOARDING PASS</div><h2>選擇歌曲</h2></div>
+      <div class="pl-tools">
+        <label class="search"><input id="q" type="search" placeholder="搜尋歌名" aria-label="搜尋歌名"></label>
+        <button class="chip" id="favOnly">♡ 只看收藏</button>
+      </div>
+    </div>
+    <div class="eras" id="eras"></div>
+    <ul class="songs" id="songs"></ul>
+    <div class="pl-foot">
+      <span id="count"></span>
+      <span>累計練習 <strong id="total">0 分鐘</strong>　<span id="today">今天尚未開始練習</span>（只記錄在這個瀏覽器）</span>
+    </div>
+  </section>
+
+  <section id="studio">
+    <div class="np" style="margin-top:6px">
+      <div>
+        <div class="label">NOW PRACTICING</div>
+        <h2 id="npTitle"></h2>
+        <div class="meta"><i id="npEra"></i>　<span id="npAlbum"></span><a class="ytlink" id="ytLink" target="_blank" rel="noopener">在 YouTube 開啟 ↗</a></div>
+      </div>
+      <div class="iconbtns">
+        <button class="ib" id="prevSong" aria-label="上一首">‹</button>
+        <button class="ib" id="favBtn" aria-label="收藏">♡</button>
+        <button class="ib" id="nextSong" aria-label="下一首">›</button>
+      </div>
+    </div>
+
+    <div class="studio">
+      <div>
+        <div class="frame"><div class="stage" id="stage">
+          <div id="player"></div>
+          <button class="cover" id="cover"><span>播放官方應援教學</span><small>OFFICIAL FANCHANT GUIDE</small></button>
+          <div class="overlay" id="overlay"><div class="now" id="now"></div></div>
+          <button class="exitfocus" id="exitFocus">離開專注模式</button>
+        </div></div>
+
+        <div class="card transport">
+          <div class="prog"><span id="tCur">0:00</span><input type="range" id="seek" min="0" max="100" step="0.1" value="0" aria-label="播放進度"><span id="tDur">0:00</span></div>
+          <div class="ctl">
+            <button class="btn" id="back5">↶ 5</button>
+            <button class="btn play" id="playBtn" aria-label="播放／暫停">▶</button>
+            <button class="btn" id="fwd5">5 ↷</button>
+            <div class="seg" id="speed" role="group" aria-label="速度">
+              <button data-r="0.5">0.5×</button><button data-r="0.75">0.75×</button><button data-r="1" class="on">1×</button>
+            </div>
+            <button class="btn" id="focusBtn">⛶ 專注模式</button>
+            <button class="btn" id="autoNext">播完接下一首</button>
+          </div>
+          <div class="ab">
+            <strong style="color:var(--ink)">↻ A–B 循環</strong>
+            <button class="btn" id="setA">設定 A</button><b id="aVal">–</b> →
+            <button class="btn" id="setB">設定 B</button><b id="bVal">–</b>
+            <button class="btn" id="loopBtn">開啟循環</button>
+            <button class="btn" id="clearAB">清除</button>
+          </div>
+          <div class="keys">鍵盤 <kbd>Space</kbd>播放／暫停 <kbd>←</kbd><kbd>→</kbd>前後 5 秒 <kbd>[</kbd><kbd>]</kbd>設定 A／B <kbd>L</kbd>循環</div>
+        </div>
+      </div>
+
+      <aside class="card script" id="script" data-size="m">
+        <div class="sc-head">
+          <div class="label">FANCHANT SCRIPT</div>
+          <div class="ttl">應援稿<span class="serif">log</span></div>
+          <div class="row">
+            <div class="seg" id="size" role="group" aria-label="字體大小">
+              <button data-s="s">小</button><button data-s="m" class="on">中</button><button data-s="l">大</button>
+            </div>
+            <button class="btn" id="ovBtn" style="padding:6px 12px;font-size:13px">影片上顯示：開</button>
+          </div>
+        </div>
+        <ul class="sc-list" id="lines"></ul>
+        <div class="sc-empty" id="scEmpty">
+          <div><div class="comp">✦</div><b>這首的應援稿整理中</b>先跟著官方教學影片練習，<br>到下方「編輯應援稿」就能加上去。</div>
+        </div>
+        <div class="sc-foot">
+          <button class="btn" id="prevLine">‹ 上一句</button>
+          <button class="btn" id="follow">⌖ 回到目前</button>
+          <button class="btn" id="nextLine">下一句 ›</button>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <details class="card edit" id="editor">
+    <summary>編輯應援稿與歌單</summary>
+    <div class="ed">
+      <div>
+        <label for="fTitle">歌名</label><input id="fTitle">
+        <label for="fAlbum">專輯</label><input id="fAlbum">
+        <label for="fEra">時期</label>
+        <select id="fEra">
+          <option value="crash">GOLDEN HOUR : Part.6</option><option value="golden">GOLDEN HOUR</option>
+          <option value="world">THE WORLD</option><option value="fever">ZERO : FEVER</option>
+          <option value="treasure">TREASURE</option><option value="other">其他</option>
+        </select>
+        <label for="fUrl">官方應援教學影片網址</label><input id="fUrl" placeholder="https://www.youtube.com/watch?v=...">
+        <div class="ctl">
+          <button class="btn on" id="saveBtn">儲存這首</button>
+          <button class="btn" id="delBtn">刪除這首</button>
+          <button class="btn" id="addBtn">＋ 新增一首</button>
+        </div>
+        <label>備份與分享</label>
+        <div class="ctl" style="margin-top:0">
+          <button class="btn" id="dlBtn">下載備份</button>
+          <button class="btn" id="ulBtn">載入備份</button>
+          <input type="file" id="ulFile" accept=".json,application/json" hidden>
+          <button class="btn" id="copyBtn">複製歌單資料</button>
+        </div>
+        <p class="hint">要讓所有訪客都看到同一份應援稿：按「複製歌單資料」，貼進程式碼裡的 DEFAULT_SONGS 再上傳網站。</p>
+        <div class="warn" id="warn">這個環境不能自動儲存（例如 Claude 的預覽視窗），關掉就會消失，請記得按「下載備份」。</div>
+      </div>
+      <div>
+        <label for="tl">應援時間軸</label>
+        <textarea id="tl" spellcheck="false" placeholder="格式：開始 結束 應援詞
+00:12.5 00:15.0 應援詞
+00:20.0 00:23.2 !김홍중
+
+句首加 ! 代表喊名字，會用不同顏色顯示。"></textarea>
+        <div class="ctl">
+          <button class="btn" id="liveBtn">邊看邊打</button>
+          <button class="btn" id="markBtn">打點模式</button>
+          <button class="btn" id="namesBtn">插入成員點名</button>
+          <button class="btn" id="applyBtn">套用</button>
+        </div>
+        <div class="live" id="live">
+          <input id="liveInput" placeholder="看到一句就打下來按 Enter（Esc 暫停／播放）">
+          <button class="btn" id="liveDone">完成</button>
+        </div>
+        <p class="hint">邊看邊打：影片播放時，看到教學裡的一句就打下來按 Enter，時間自動記錄。打點模式：先一行打一句，播放時每句開始按空白鍵。</p>
+        <div class="status" id="status"></div>
+      </div>
+    </div>
+  </details>
+
+  <footer>
+    <span class="big">ATEEZ × ATINY</span>
+    <span>非官方粉絲應援練習頁 · 官方標誌、影片、音樂與歌詞屬各自權利人</span>
+    <button class="btn" id="srcBtn2">影片來源 ↗</button>
+  </footer>
+</main>
+
+<dialog id="srcDlg">
+  <div class="label">OFFICIAL SOURCES</div>
+  <h2>影片來源</h2>
+  <p class="hint">本頁影片皆為 YouTube 上的官方應援教學，應援內容以官方為準。</p>
+  <ul id="srcList"></ul>
+  <form method="dialog"><button class="btn">關閉</button></form>
+</dialog>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+/* ===== 網站預設歌單：把「複製歌單資料」的結果貼在這裡 ===== */
+const DEFAULT_SONGS = [
+  { title:"Drip", album:"GOLDEN HOUR : Part.6", era:"crash", url:"https://www.youtube.com/watch?v=Ji2bTtVdSEw", tl:"" },
+  { title:"BAD", album:"GOLDEN HOUR : Part.5", era:"golden", url:"https://www.youtube.com/watch?v=cSwxQupCwRI", tl:"" },
+  { title:"Adrenaline", album:"GOLDEN HOUR : Part.4", era:"golden", url:"https://www.youtube.com/watch?v=3uN4ufH-23c", tl:"" },
+  { title:"Lemon Drop", album:"GOLDEN HOUR : Part.3", era:"golden", url:"https://www.youtube.com/watch?v=UYHcoV0auqk", tl:"" },
+  { title:"Ice on my teeth", album:"GOLDEN HOUR : Part.2", era:"golden", url:"https://www.youtube.com/watch?v=a0k8eWdHhmE&t=140s", tl:"" },
+  { title:"WORK", album:"GOLDEN HOUR : Part.1", era:"golden", url:"https://www.youtube.com/watch?v=6pb27Pb4bBM", tl:"" },
+  { title:"Crazy Form", album:"THE WORLD EP.FIN : WILL", era:"world", url:"https://www.youtube.com/watch?v=GZmBILufqsw", tl:"" },
+  { title:"BOUNCY (K-HOT CHILLI PEPPERS)", album:"THE WORLD EP.2 : OUTLAW", era:"world", url:"https://www.youtube.com/watch?v=HPNnU_si6sk", tl:"" },
+  { title:"HALAZIA", album:"SPIN OFF : FROM THE WITNESS", era:"world", url:"https://www.youtube.com/watch?v=UZtjGtCobog", tl:"" },
+  { title:"Guerrilla", album:"THE WORLD EP.1 : MOVEMENT", era:"world", url:"https://www.youtube.com/watch?v=tGbbh2FTGAg", tl:"" },
+  { title:"Deja Vu", album:"ZERO : FEVER Part.3", era:"fever", url:"https://www.youtube.com/watch?v=gmaXuFb1bu8", tl:"" },
+  { title:"Eternal Sunshine", album:"ZERO : FEVER Part.2", era:"fever", url:"https://www.youtube.com/watch?v=5Vrw2WdblD0", tl:"" },
+  { title:"Answer", album:"TREASURE EPILOGUE", era:"treasure", url:"https://www.youtube.com/watch?v=OICcKAfzDuo", tl:"" },
+  { title:"WONDERLAND", album:"TREASURE EP.3", era:"treasure", url:"https://www.youtube.com/watch?v=PIVSwQEbKS0", tl:"" },
+  { title:"Say My Name", album:"TREASURE EP.2", era:"treasure", url:"https://www.youtube.com/watch?v=IqeI9bJKQsk", tl:"" }
+];
+const ERA_NAME = { crash:"PART.6", golden:"GOLDEN HOUR", world:"THE WORLD", fever:"ZERO : FEVER", treasure:"TREASURE", other:"其他" };
+const MEMBERS = ["김홍중","박성화","정윤호","강여상","최산","송민기","정우영","최종호"];
+const KEY = 'ateez-room-v1';
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let state = { songs:[], favs:[], practice:{}, autoNext:false, size:'m', overlay:true };
+let cur = 0, chants = [], curLine = -1, player, ready = false, rate = 1;
+let A = null, B = null, loop = false, following = true, eraFilter = 'all', favOnly = false, canSave = true;
+let marking = false, markQueue = [], markTimes = [], living = false, lastTickT = 0;
+
+/* ---------- 工具 ---------- */
+const toSec = s => { const p = s.split(':').map(Number); return p.length === 2 ? p[0]*60 + p[1] : p[0]; };
+const fmt = t => `${String(Math.floor(t/60)).padStart(2,'0')}:${(t%60).toFixed(1).padStart(4,'0')}`;
+const mmss = t => `${Math.floor(t/60)}:${String(Math.floor(t%60)).padStart(2,'0')}`;
+const TIME = /^(\d+:\d+(?:\.\d+)?|\d+(?:\.\d+)?)\s+(\d+:\d+(?:\.\d+)?|\d+(?:\.\d+)?)\s+(.+)$/;
+const parse = txt => (txt||'').split('\n').map(l=>l.trim()).filter(Boolean).map(l=>l.match(TIME)).filter(Boolean)
+  .map(m=>({start:toSec(m[1]),end:toSec(m[2]),text:m[3]})).sort((a,b)=>a.start-b.start);
+const toText = list => list.map(c=>`${fmt(c.start)} ${fmt(c.end)} ${c.text}`).join('\n');
+function getVid(v){
+  v = v || '';
+  const m = v.match(/(?:v=|youtu\.be\/|shorts\/|embed\/|live\/)([\w-]{11})/);
+  const id = m ? m[1] : (/^[\w-]{11}$/.test(v.trim()) ? v.trim() : null);
+  const t = v.match(/[?&]t=(\d+)/);
+  return id ? { videoId:id, startSeconds: t ? Number(t[1]) : 0 } : null;
+}
+const say = t => $('status').textContent = t;
+const S = () => state.songs[cur];
+
+/* ---------- 儲存 ---------- */
+function persist(){
+  try{ localStorage.setItem(KEY, JSON.stringify(state)); canSave = true; }catch(e){ canSave = false; }
+  $('warn').classList.toggle('show', !canSave);
+}
+function load(){
+  try{
+    const d = JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (d && Array.isArray(d.songs)) state = Object.assign(state, d);
+    localStorage.setItem(KEY+'-t','1'); localStorage.removeItem(KEY+'-t');
+  }catch(e){ canSave = false; }
+  if (!state.songs.length) state.songs = JSON.parse(JSON.stringify(DEFAULT_SONGS));
+  $('warn').classList.toggle('show', !canSave);
+}
+
+/* ---------- 歌單 ---------- */
+function renderEras(){
+  const box = $('eras'); box.innerHTML = '';
+  [['all','全部'], ...Object.entries(ERA_NAME).filter(([k]) => state.songs.some(s => (s.era||'other') === k))]
+    .forEach(([k,n]) => {
+      const b = document.createElement('button'); b.className = 'chip' + (eraFilter === k ? ' on' : ''); b.textContent = n;
+      b.onclick = () => { eraFilter = k; renderEras(); renderSongs(); }; box.appendChild(b);
+    });
+}
+function visible(){
+  const q = $('q').value.trim().toLowerCase();
+  return state.songs.map((s,i)=>[s,i]).filter(([s,i]) =>
+    (eraFilter === 'all' || (s.era||'other') === eraFilter) &&
+    (!favOnly || state.favs.includes(s.title)) &&
+    (!q || s.title.toLowerCase().includes(q)));
+}
+function renderSongs(){
+  const ul = $('songs'), list = visible(); ul.innerHTML = '';
+  list.forEach(([s,i]) => {
+    const li = document.createElement('li'), b = document.createElement('button');
+    b.className = 'song' + (i === cur ? ' active' : ''); b.dataset.era = s.era || 'other';
+    b.innerHTML = `<span class="no">${String(i+1).padStart(2,'0')}</span><span class="body"><b>${esc(s.title)}</b><small>${esc(s.album||'')}</small></span>`
+      + `<span class="tag">${state.favs.includes(s.title) ? '♥ ' : ''}${s.tl ? '有應援稿' : ''}</span>`;
+    b.onclick = () => { select(i); $('studio').scrollIntoView(); };
+    li.appendChild(b); ul.appendChild(li);
+  });
+  $('count').textContent = `${list.length} 首歌曲`;
+}
+$('q').oninput = renderSongs;
+$('favOnly').onclick = () => { favOnly = !favOnly; $('favOnly').classList.toggle('on', favOnly); renderSongs(); };
+
+function select(i){
+  if (marking) stopMark(false);
+  if (living) stopLive();
+  cur = (i + state.songs.length) % state.songs.length; const s = S();
+  document.body.dataset.era = s.era || 'crash';
+  $('npTitle').textContent = s.title; $('npAlbum').textContent = s.album || '';
+  $('npEra').textContent = ERA_NAME[s.era||'other'] || '';
+  $('ytLink').href = s.url || '#'; $('ytLink').style.display = s.url ? '' : 'none';
+  $('favBtn').classList.toggle('on', state.favs.includes(s.title)); $('favBtn').textContent = state.favs.includes(s.title) ? '♥' : '♡';
+  $('fTitle').value = s.title; $('fAlbum').value = s.album||''; $('fEra').value = s.era||'other'; $('fUrl').value = s.url||''; $('tl').value = s.tl||'';
+  const v = getVid(s.url);
+  $('cover').classList.remove('hide');
+  $('cover').style.backgroundImage = v ? `url(https://i.ytimg.com/vi/${v.videoId}/hqdefault.jpg)` : 'none';
+  $('cover').querySelector('span').lastChild.textContent = v ? '播放官方應援教學' : '這首還沒有影片';
+  if (ready && v) player.cueVideoById(v);
+  A = B = null; loop = false; updateAB();
+  setChants(parse(s.tl));
+  renderSongs(); $('playBtn').textContent = '▶';
+}
+$('prevSong').onclick = () => select(cur - 1);
+$('nextSong').onclick = () => select(cur + 1);
+$('favBtn').onclick = () => {
+  const t = S().title, f = state.favs;
+  f.includes(t) ? f.splice(f.indexOf(t),1) : f.push(t);
+  persist(); select(cur);
+};
+
+/* ---------- 應援稿面板 ---------- */
+function setChants(list){
+  chants = list; curLine = -1;
+  const ul = $('lines'); ul.innerHTML = '';
+  $('scEmpty').style.display = list.length ? 'none' : 'grid';
+  ul.style.display = list.length ? '' : 'none';
+  list.forEach((c,i) => {
+    const li = document.createElement('li'), call = c.text.startsWith('!');
+    li.className = 'line' + (call ? ' call' : '');
+    li.innerHTML = `<time>${mmss(c.start)}</time><span>${esc(c.text.replace(/^!/,''))}</span>`;
+    li.onclick = () => { if (ready){ player.seekTo(c.start, true); following = true; } };
+    ul.appendChild(li);
+  });
+}
+function highlight(idx){
+  if (idx === curLine) return;
+  curLine = idx;
+  [...$('lines').children].forEach((li,i) => { li.classList.toggle('cur', i === idx); li.classList.toggle('done', idx >= 0 && i < idx); });
+  const n = $('now'), c = chants[idx];
+  n.textContent = c ? c.text.replace(/^!/,'') : ''; n.classList.toggle('call', !!c && c.text.startsWith('!'));
+  if (following && idx >= 0) scrollToLine(idx);
+}
+let programScroll = false;
+function scrollToLine(i){
+  const ul = $('lines'), li = ul.children[i]; if (!li) return;
+  programScroll = true;
+  ul.scrollTo({ top: li.offsetTop - ul.clientHeight * 0.35 });
+  setTimeout(() => programScroll = false, 600);
+}
+$('lines').addEventListener('scroll', () => { if (!programScroll) following = false; });
+$('follow').onclick = () => { following = true; if (curLine >= 0) scrollToLine(curLine); };
+const jump = d => {
+  if (!ready || !chants.length) return;
+  const t = player.getCurrentTime();
+  let i = curLine >= 0 ? curLine + d : (d > 0 ? chants.findIndex(c => c.start > t) : chants.filter(c => c.start < t).length - 1);
+  i = Math.max(0, Math.min(chants.length - 1, i)); following = true; player.seekTo(chants[i].start, true);
+};
+$('prevLine').onclick = () => jump(-1);
+$('nextLine').onclick = () => jump(1);
+$('size').addEventListener('click', e => {
+  const s = e.target.dataset.s; if (!s) return;
+  state.size = s; $('script').dataset.size = s;
+  [...$('size').children].forEach(b => b.classList.toggle('on', b === e.target)); persist();
+});
+$('ovBtn').onclick = () => { state.overlay = !state.overlay; applyOverlay(); persist(); };
+function applyOverlay(){ $('overlay').classList.toggle('off', !state.overlay); $('ovBtn').textContent = '影片上顯示：' + (state.overlay ? '開' : '關'); }
+
+/* ---------- 播放器 ---------- */
+function onYouTubeIframeAPIReady(){
+  player = new YT.Player('player', {
+    playerVars:{ playsinline:1, fs:0, rel:0 },
+    events:{
+      onReady: () => { ready = true; const v = getVid(S()?.url); if (v) player.cueVideoById(v); },
+      onStateChange: e => {
+        $('playBtn').textContent = e.data === YT.PlayerState.PLAYING ? '❚❚' : '▶';
+        if (e.data === YT.PlayerState.PLAYING){ player.setPlaybackRate(rate); $('cover').classList.add('hide'); }
+        if (e.data === YT.PlayerState.ENDED && state.autoNext){ select(cur + 1); setTimeout(() => player.playVideo(), 400); }
+      }
+    }
+  });
+}
+const play = () => { if (!ready || !getVid(S().url)) return; $('cover').classList.add('hide'); player.playVideo(); };
+const togglePlay = () => { if (!ready) return; player.getPlayerState() === 1 ? player.pauseVideo() : play(); };
+const skip = d => { if (ready) player.seekTo(Math.max(0, player.getCurrentTime() + d), true); };
+$('cover').onclick = play;
+$('playBtn').onclick = togglePlay;
+$('back5').onclick = () => skip(-5);
+$('fwd5').onclick = () => skip(5);
+$('seek').oninput = e => { if (ready) player.seekTo(player.getDuration() * e.target.value / 100, true); };
+$('speed').addEventListener('click', e => {
+  const r = e.target.dataset.r; if (!r) return; rate = Number(r);
+  [...$('speed').children].forEach(b => b.classList.toggle('on', b === e.target));
+  if (ready) player.setPlaybackRate(rate);
+});
+$('autoNext').onclick = () => { state.autoNext = !state.autoNext; $('autoNext').classList.toggle('on', state.autoNext); persist(); };
+
+/* A–B */
+function updateAB(){
+  $('aVal').textContent = A == null ? '–' : mmss(A); $('bVal').textContent = B == null ? '–' : mmss(B);
+  $('loopBtn').classList.toggle('on', loop); $('loopBtn').textContent = loop ? '循環中' : '開啟循環';
+}
+const setA = () => { if (ready){ A = player.getCurrentTime(); if (B != null && B <= A) B = null; updateAB(); } };
+const setB = () => { if (ready){ B = player.getCurrentTime(); if (A != null && B <= A) B = null; updateAB(); } };
+const toggleLoop = () => { if (A == null || B == null){ say('先設定 A 和 B'); return; } loop = !loop; updateAB(); };
+$('setA').onclick = setA; $('setB').onclick = setB; $('loopBtn').onclick = toggleLoop;
+$('clearAB').onclick = () => { A = B = null; loop = false; updateAB(); };
+
+/* 專注模式 */
+$('focusBtn').onclick = () => {
+  const s = $('stage');
+  if (s.requestFullscreen && document.fullscreenEnabled) s.requestFullscreen();
+  else if (s.webkitRequestFullscreen) s.webkitRequestFullscreen();
+  else { s.classList.add('focus'); document.body.style.overflow = 'hidden'; }
+};
+$('exitFocus').onclick = () => {
+  if (document.fullscreenElement) document.exitFullscreen();
+  $('stage').classList.remove('focus'); document.body.style.overflow = '';
+};
+
+/* 鍵盤 */
+document.addEventListener('keydown', e => {
+  if (['TEXTAREA','INPUT','SELECT'].includes(e.target.tagName)) return;
+  if (e.code === 'Space'){ e.preventDefault(); marking ? stamp() : togglePlay(); }
+  else if (e.key === 'ArrowLeft'){ e.preventDefault(); skip(-5); }
+  else if (e.key === 'ArrowRight'){ e.preventDefault(); skip(5); }
+  else if (e.key === '['){ setA(); }
+  else if (e.key === ']'){ setB(); }
+  else if (e.key.toLowerCase() === 'l'){ toggleLoop(); }
+});
+
+/* ---------- 練習時間 ---------- */
+const todayKey = () => new Date().toISOString().slice(0,10);
+function renderPractice(){
+  const tot = Object.values(state.practice).reduce((a,b)=>a+b,0), td = state.practice[todayKey()] || 0;
+  $('total').textContent = `${Math.floor(tot/60)} 分鐘`;
+  $('today').textContent = td ? `今天練了 ${Math.max(1,Math.floor(td/60))} 分鐘` : '今天尚未開始練習';
+}
+setInterval(() => {
+  if (ready && player.getPlayerState?.() === 1){
+    const k = todayKey(); state.practice[k] = (state.practice[k]||0) + 5; renderPractice(); persist();
+  }
+}, 5000);
+
+/* ---------- 主迴圈 ---------- */
+function tick(){
+  if (ready && player.getCurrentTime){
+    const t = player.getCurrentTime() || 0, d = player.getDuration() || 0;
+    if (loop && A != null && B != null && t >= B) player.seekTo(A, true);
+    highlight(chants.findIndex(c => t >= c.start && t < c.end));
+    if (Math.abs(t - lastTickT) > .2){ lastTickT = t; $('tCur').textContent = mmss(t); $('tDur').textContent = mmss(d); if (d) $('seek').value = t / d * 100; }
+  }
+  requestAnimationFrame(tick);
+}
+
+/* ---------- 編輯 ---------- */
+$('saveBtn').onclick = () => {
+  const s = S();
+  s.title = $('fTitle').value.trim() || s.title; s.album = $('fAlbum').value.trim(); s.era = $('fEra').value;
+  s.url = $('fUrl').value.trim(); s.tl = $('tl').value;
+  persist(); renderEras(); select(cur); say(canSave ? '已儲存' : '已套用，但這裡不能自動儲存，請下載備份');
+};
+$('applyBtn').onclick = () => { setChants(parse($('tl').value)); say(`已套用 ${chants.length} 句（記得按儲存）`); };
+$('delBtn').onclick = () => {
+  if (!confirm(`確定刪除「${S().title}」？`)) return;
+  state.songs.splice(cur,1); if (!state.songs.length) state.songs.push({title:'新歌',album:'',era:'other',url:'',tl:''});
+  persist(); renderEras(); select(Math.max(0,cur-1));
+};
+$('addBtn').onclick = () => {
+  state.songs.push({title:'新歌',album:'',era:'other',url:'',tl:''}); persist(); renderEras(); select(state.songs.length-1);
+  $('fTitle').focus(); $('fTitle').select();
+};
+$('namesBtn').onclick = () => {
+  const ta = $('tl'), pos = ta.selectionStart ?? ta.value.length, before = ta.value.slice(0,pos);
+  ta.value = before + (before && !before.endsWith('\n') ? '\n' : '') + MEMBERS.map(n=>'!'+n).join('\n') + '\n!ATEEZ\n' + ta.value.slice(pos);
+  say('已插入成員點名，請依官方教學確認順序和位置');
+};
+$('dlBtn').onclick = () => {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(state.songs,null,2)], {type:'application/json'}));
+  a.download = `ateez-fanchant-${todayKey()}.json`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+};
+$('ulBtn').onclick = () => $('ulFile').click();
+$('ulFile').onchange = e => {
+  const f = e.target.files[0]; if (!f) return;
+  f.text().then(t => { const d = JSON.parse(t); if (!Array.isArray(d)) throw 0; state.songs = d; persist(); renderEras(); select(0); say('備份已載入'); })
+   .catch(() => say('檔案格式不對')); e.target.value = '';
+};
+$('copyBtn').onclick = async () => {
+  const data = JSON.stringify(state.songs, null, 2);
+  try{ await navigator.clipboard.writeText(data); say('歌單資料已複製'); }catch(e){ prompt('請手動複製：', data); }
+};
+
+/* 邊看邊打 */
+function startLive(){
+  if (!getVid($('fUrl').value)){ say('先填影片網址並儲存'); return; }
+  if (marking) stopMark(false);
+  living = true; $('live').classList.add('show'); $('liveBtn').classList.add('on');
+  setChants(parse($('tl').value)); play(); $('liveInput').focus(); say('播放中：看到一句就打下來按 Enter');
+}
+function stopLive(){
+  living = false; $('live').classList.remove('show'); $('liveBtn').classList.remove('on');
+  S().tl = $('tl').value = toText(chants); persist(); renderSongs(); say(`完成，共 ${chants.length} 句`);
+}
+$('liveBtn').onclick = () => living ? stopLive() : startLive();
+$('liveDone').onclick = stopLive;
+$('liveInput').addEventListener('keydown', e => {
+  if (e.key === 'Escape'){ e.preventDefault(); togglePlay(); return; }
+  if (e.key !== 'Enter' || e.isComposing) return;
+  e.preventDefault(); const text = e.target.value.trim(); if (!text) return;
+  const start = Math.max(0, player.getCurrentTime() - 1.5);
+  const prev = chants.filter(c => c.start < start).pop();
+  if (prev && prev.end > start) prev.end = Math.max(prev.start + .5, start - .1);
+  const list = [...chants, {start, end:start+3.5, text}].sort((a,b)=>a.start-b.start);
+  setChants(list); $('tl').value = toText(list); e.target.value = '';
+  say(`已記錄 ${list.length} 句（${fmt(start)}）`);
+});
+
+/* 打點模式 */
+function startMark(){
+  if (!getVid($('fUrl').value)){ say('先填影片網址並儲存'); return; }
+  markQueue = $('tl').value.split('\n').map(l=>l.trim()).filter(Boolean).map(l => { const m = l.match(TIME); return m ? m[3] : l; });
+  if (!markQueue.length){ say('先在時間軸一行打一句應援詞'); return; }
+  marking = true; markTimes = []; $('markBtn').textContent = '打點（空白鍵）'; $('markBtn').classList.add('on');
+  say(`下一句：${markQueue[0].replace(/^!/,'')}`); player.seekTo(0); play();
+}
+function stamp(){
+  markTimes.push(player.getCurrentTime()); const i = markTimes.length;
+  if (i >= markQueue.length) return stopMark(true);
+  say(`${i}/${markQueue.length}　下一句：${markQueue[i].replace(/^!/,'')}`);
+}
+function stopMark(done){
+  marking = false; $('markBtn').textContent = '打點模式'; $('markBtn').classList.remove('on'); if (!done) return;
+  const list = markTimes.map((s,i)=>({start:s,end:(markTimes[i+1] ?? s+3.5)-.1,text:markQueue[i]}));
+  setChants(list); S().tl = $('tl').value = toText(list); persist(); renderSongs(); say('打點完成');
+}
+$('markBtn').onclick = () => marking ? stamp() : startMark();
+
+/* ---------- 影片來源 ---------- */
+function openSrc(){
+  $('srcList').innerHTML = state.songs.filter(s => s.url).map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)} ↗</a></li>`).join('');
+  $('srcDlg').showModal();
+}
+$('srcBtn').onclick = openSrc; $('srcBtn2').onclick = openSrc;
+
+/* ---------- 開頭的碎玻璃線條 ---------- */
+(function(){
+  const svg = $('introArt'), NS = 'http://www.w3.org/2000/svg', rnd = (a,b) => a + Math.random()*(b-a);
+  for (let i=0;i<4;i++){
+    const p = document.createElementNS(NS,'polyline'); let x = rnd(120,380), y = rnd(0,220), pts = [];
+    for (let k=0;k<5;k++){ pts.push(`${x.toFixed(0)},${y.toFixed(0)}`); x += rnd(-60,60); y += rnd(-50,50); }
+    p.setAttribute('points', pts.join(' ')); svg.appendChild(p);
+  }
+  for (let i=0;i<14;i++){
+    const cx = rnd(80,400), cy = rnd(0,220), r = Math.random()<.25 ? rnd(22,46) : rnd(5,18), n = 3 + Math.floor(Math.random()*2), pts = [];
+    for (let k=0;k<n;k++){ const a = k/n*Math.PI*2 + rnd(-.4,.4), rr = r*rnd(.45,1); pts.push(`${(cx+Math.cos(a)*rr).toFixed(1)},${(cy+Math.sin(a)*rr).toFixed(1)}`); }
+    const g = document.createElementNS(NS,'polygon'); g.setAttribute('points', pts.join(' ')); svg.appendChild(g);
+  }
+})();
+
+
+/* ---------- 羅盤刻度與跑馬燈 ---------- */
+(function(){
+  const g = $('ticks'), NS = 'http://www.w3.org/2000/svg';
+  for (let i=0;i<72;i++){
+    const a = i/72*Math.PI*2, r1 = i%9===0 ? 168 : 176, l = document.createElementNS(NS,'line');
+    l.setAttribute('x1', 200+Math.cos(a)*r1); l.setAttribute('y1', 200+Math.sin(a)*r1);
+    l.setAttribute('x2', 200+Math.cos(a)*186); l.setAttribute('y2', 200+Math.sin(a)*186); l.setAttribute('class','tick');
+    g.appendChild(l);
+  }
+  const words = ['FANCHANT','PRACTICE ROOM','GOLDEN HOUR : PART.6','THE WORLD','ZERO : FEVER','TREASURE','ATINY'];
+  const one = words.map(w => `${w}<b>✦</b>`).join('');
+  $('mq').innerHTML = one + one + one + one;
+})();
+
+/* ---------- 啟動 ---------- */
+load();
+$('script').dataset.size = state.size;
+[...$('size').children].forEach(b => b.classList.toggle('on', b.dataset.s === state.size));
+$('autoNext').classList.toggle('on', state.autoNext);
+applyOverlay(); renderEras(); renderPractice(); select(0); tick();
+</script>
+</body>
+</html>
