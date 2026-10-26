@@ -145,6 +145,8 @@ h2{margin:2px 0 0;font-size:24px;font-weight:900}
 .overlay .now{font-weight:900;font-size:clamp(20px,4.4vw,52px);line-height:1.2;color:#fff;text-shadow:0 0 4px #000,0 0 14px #000,0 2px 0 #000}
 .overlay .now.call{color:var(--call)}
 .overlay.off{display:none}
+.overlay .count{font-family:Oswald,sans-serif;font-weight:700;font-size:clamp(56px,11vw,128px);line-height:1;color:#fff;text-shadow:0 0 6px #000,0 0 18px #000}
+.overlay .count:empty{display:none}
 .stage.focus{position:fixed;inset:0;z-index:60;border-radius:0;aspect-ratio:auto;width:100vw;height:100dvh}
 .exitfocus{display:none;position:absolute;z-index:3;top:calc(10px + env(safe-area-inset-top,0));right:10px;background:rgba(0,0,0,.6);color:#fff;border:0;border-radius:99px;padding:6px 14px}
 .stage.focus .exitfocus,.stage:fullscreen .exitfocus{display:block}
@@ -236,6 +238,21 @@ dialog a:hover{color:var(--accent)}
 .lyrics-list li.stamp{cursor:pointer}
 .lyrics-list li.cur{background:color-mix(in srgb,var(--accent) 12%,transparent);border-radius:8px;padding-left:8px;padding-right:8px}
 .lyrics-list li.done{opacity:.45}
+/* 同步應援稿：每句倒數、只顯示應援字、時間微調 */
+.cd{display:flex;align-items:center;gap:12px;margin:10px 12px 0;padding:8px 14px;border:1px solid var(--line);border-radius:14px;min-height:62px}
+.cd .num{font-family:Oswald,sans-serif;font-weight:700;font-size:20px;min-width:52px;text-align:center;color:var(--sub)}
+.cd.hot{background:color-mix(in srgb,var(--accent) 14%,transparent)}
+.cd.hot .num{font-size:44px;line-height:1;color:var(--accent)}
+.cd small{display:block;font-size:12px;color:var(--sub)}
+.cd b{font-size:18px;color:var(--call);overflow-wrap:anywhere}
+.tune-bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px}
+.tune-bar .btn{padding:6px 12px;font-size:13px}
+.offset{display:flex;flex-wrap:wrap;align-items:center;gap:4px;font-size:13px;color:var(--sub)}
+.offset b{color:var(--ink);min-width:86px;text-align:center}
+.offset button,.line .tune button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:3px 8px;font-size:12px;cursor:pointer}
+.line .tune{display:none;margin-left:auto;gap:4px;flex-shrink:0;align-items:flex-start}
+.script.tuning .line .tune{display:flex}
+.line.hide{display:none}
 .script [hidden]{display:none!important}
 .bad-g{color:#b4e59a;font-weight:700}.bad-p{color:#ffb5d0;font-weight:700}.bad-y{color:#f3d990}
 </style>
@@ -305,7 +322,7 @@ dialog a:hover{color:var(--accent)}
         <div class="frame"><div class="stage" id="stage">
           <div id="player"></div>
           <button class="cover" id="cover"><span>播放官方應援教學</span><small>OFFICIAL FANCHANT GUIDE</small></button>
-          <div class="overlay" id="overlay"><div class="now" id="now"></div></div>
+          <div class="overlay" id="overlay"><div class="count" id="ovCount"></div><div class="now" id="now"></div></div>
           <button class="exitfocus" id="exitFocus">離開專注模式</button>
         </div></div>
 
@@ -347,7 +364,17 @@ dialog a:hover{color:var(--accent)}
             <button class="btn" id="timedLyricsBtn" aria-pressed="false">同步應援稿</button>
           </div>
           <p class="lyrics-note" id="lyricsNote"></p>
+          <div class="tune-bar" id="tuneBar" hidden>
+            <button class="btn" id="chantOnlyBtn" aria-pressed="false">只顯示應援字</button>
+            <button class="btn" id="tuneBtn" aria-pressed="false">微調時間</button>
+            <div class="offset" id="offsetRow" hidden>整首
+              <button data-o="-0.5">−0.5</button><button data-o="-0.1">−0.1</button>
+              <b id="offVal">不偏移</b>
+              <button data-o="0.1">+0.1</button><button data-o="0.5">+0.5</button>
+            </div>
+          </div>
         </div>
+        <div class="cd" id="cdBox" hidden aria-live="off"><div class="num" id="cdNum"></div><div><small id="cdLabel">下一句</small><b id="cdText"></b></div></div>
         <ul class="lyrics-list" id="fullLyrics" aria-label="完整歌詞與應援標記" tabindex="0" hidden></ul>
         <ul class="sc-list" id="lines"></ul>
         <div class="sc-empty" id="scEmpty">
@@ -562,7 +589,7 @@ function select(i){
   if (ready && v) player.cueVideoById(v);
   A = B = null; loop = false; updateAB();
   renderFullLyrics();
-  setChants(parse($('tl').value));
+  setChants(parse($('tl').value)); renderTuneBar();
   renderSongs(); $('playBtn').textContent = '▶';
 }
 $('prevSong').onclick = () => select(cur - 1);
@@ -616,6 +643,8 @@ function updateScriptView(){
   $('lines').hidden = full;
   $('scEmpty').hidden = full;
   $('timedControls').hidden = full;
+  $('tuneBar').hidden = full || !chants.length;
+  $('cdBox').hidden = full || !chants.length;
   $('lyricsNote').textContent = full
     ? `完整原歌詞＋應援／發音提示（非翻譯） · ${data.source || `PDF 第 ${data.page} 頁`}。彩色文字保留原稿標記；`
       + (lyricSecs.length ? '播放時會跟著時間亮起，點時間可跳到該段。' : '尚未標記同步時間。')
@@ -628,14 +657,80 @@ function setChants(list){
   const ul = $('lines'); ul.innerHTML = '';
   $('scEmpty').style.display = list.length ? 'none' : 'grid';
   ul.style.display = list.length ? '' : 'none';
+  const only = chantOnlyOn();
   list.forEach((c,i) => {
     const li = document.createElement('li'), call = c.text.startsWith('!');
-    li.className = 'line' + (call ? ' call' : '');
-    li.innerHTML = `<time>${c.approx ? "約 " : ""}${mmss(c.start)}</time><span>${esc(c.text.replace(/^!/,''))}</span>`;
-    li.onclick = () => { if (ready){ player.seekTo(c.start, true); following = true; } };
+    li.className = 'line' + (call ? ' call' : '') + (only && !call ? ' hide' : '');
+    li.innerHTML = `<time>${c.approx ? "約 " : ""}${tuning ? mmssd(c.start) : mmss(c.start)}</time><span>${esc(c.text.replace(/^!/,''))}</span>`
+      + `<span class="tune"><button data-d="-0.1" title="提早 0.1 秒">−0.1</button><button data-d="0.1" title="延後 0.1 秒">＋0.1</button><button data-now="1" title="把這句的開始時間設成目前播放時間">設成現在</button></span>`;
+    li.onclick = e => {
+      const b = e.target.closest('.tune button');
+      if (b){ e.stopPropagation(); b.dataset.now ? setCueNow(i) : nudgeCue(i, Number(b.dataset.d)); return; }
+      if (ready){ player.seekTo(c.start + songOffset(), true); following = true; }
+    };
     ul.appendChild(li);
   });
+  lastCd = null; $('ovCount').textContent = '';
   updateScriptView();
+}
+
+/* ---------- 只顯示應援字、每句倒數、時間微調 ---------- */
+let tuning = false, lastCd = null;
+const mmssd = t => `${Math.floor(t/60)}:${(t%60).toFixed(1).padStart(4,'0')}`;
+const r1 = t => Math.round(t * 10) / 10;
+/* 整首偏移（秒）：正數＝應援時間整體延後，負數＝提早；存在歌單資料的 offset，會跟著備份與複製帶走 */
+const songOffset = () => Number(S()?.offset) || 0;
+/* 只顯示應援字：只留句首有 ! 的句子；這首沒有 ! 的句子時就全部顯示 */
+const chantOnlyOn = () => !!state.chantOnly && chants.some(c => c.text.startsWith('!'));
+function commitChants(msg){
+  const ul = $('lines'), top = ul.scrollTop;
+  chants.sort((a,b) => a.start - b.start);
+  S().tl = $('tl').value = toText(chants); persist();
+  setChants(chants);
+  programScroll = true; ul.scrollTop = top; setTimeout(() => programScroll = false, 100);
+  say(canSave ? msg : msg + '（這裡不能自動儲存，請下載備份）');
+}
+function shiftCue(i, d){
+  const c = chants[i]; if (!c) return;
+  d = Math.max(-c.start, d);
+  c.start = r1(c.start + d); if (c.end != null) c.end = r1(c.end + d);
+  commitChants(`「${c.text.replace(/^!/,'')}」改為 ${mmssd(c.start)}`);
+}
+const nudgeCue = (i, d) => shiftCue(i, d);
+function setCueNow(i){
+  if (!ready){ say('影片還沒準備好'); return; }
+  shiftCue(i, r1(player.getCurrentTime() - songOffset()) - chants[i].start);
+}
+function renderOffset(){
+  const o = songOffset();
+  $('offVal').textContent = o > 0 ? `延後 ${o.toFixed(1)} 秒` : o < 0 ? `提早 ${(-o).toFixed(1)} 秒` : '不偏移';
+}
+$('offsetRow').addEventListener('click', e => {
+  const d = Number(e.target.dataset.o); if (!d) return;
+  const s = S(), o = r1(songOffset() + d);
+  if (o) s.offset = o; else delete s.offset;
+  persist(); renderOffset(); lastCd = null; say(canSave ? '整首時間已調整並儲存' : '已調整，但這裡不能自動儲存，請下載備份');
+});
+function renderTuneBar(){
+  $('chantOnlyBtn').classList.toggle('on', !!state.chantOnly); $('chantOnlyBtn').setAttribute('aria-pressed', String(!!state.chantOnly));
+  $('tuneBtn').classList.toggle('on', tuning); $('tuneBtn').setAttribute('aria-pressed', String(tuning));
+  $('offsetRow').hidden = !tuning; $('script').classList.toggle('tuning', tuning);
+  renderOffset();
+}
+$('chantOnlyBtn').onclick = () => { state.chantOnly = !state.chantOnly; persist(); renderTuneBar(); setChants(chants); };
+$('tuneBtn').onclick = () => { tuning = !tuning; renderTuneBar(); setChants(chants); };
+/* t 是已扣掉整首偏移的時間；找下一句要喊的應援，剩 3 秒內顯示大字 3、2、1 */
+function countdown(t){
+  const only = chantOnlyOn(), next = chants.find(c => c.start > t && (!only || c.text.startsWith('!')));
+  const left = next ? next.start - t : 0, n = next && left <= 3 ? Math.ceil(left) : 0;
+  const key = next ? `${chants.indexOf(next)}|${n || left.toFixed(1)}` : 'end';
+  if (key === lastCd) return;
+  lastCd = key;
+  $('cdBox').classList.toggle('hot', !!n);
+  $('cdNum').textContent = n ? n : (next ? `${left.toFixed(1)}s` : '');
+  $('cdLabel').textContent = next ? (n ? '準備喊' : `下一句 · 還有 ${left.toFixed(1)} 秒`) : '';
+  $('cdText').textContent = next ? next.text.replace(/^!/,'') : '這首的應援結束了';
+  $('ovCount').textContent = n ? n : '';
 }
 function highlight(idx){
   if (idx === curLine) return;
@@ -643,7 +738,7 @@ function highlight(idx){
   [...$('lines').children].forEach((li,i) => { li.classList.toggle('cur', i === idx); li.classList.toggle('done', idx >= 0 && i < idx); });
   const n = $('now'), c = chants[idx];
   n.textContent = c ? c.text.replace(/^!/,'') : ''; n.classList.toggle('call', !!c && c.text.startsWith('!'));
-  if (following && idx >= 0) scrollToLine(idx);
+  if (following && !tuning && idx >= 0) scrollToLine(idx);
 }
 let programScroll = false;
 function scrollToLine(i){
@@ -656,9 +751,9 @@ $('lines').addEventListener('scroll', () => { if (!programScroll) following = fa
 $('follow').onclick = () => { following = true; if (curLine >= 0) scrollToLine(curLine); };
 const jump = d => {
   if (!ready || !chants.length) return;
-  const t = player.getCurrentTime();
+  const t = player.getCurrentTime() - songOffset();
   let i = curLine >= 0 ? curLine + d : (d > 0 ? chants.findIndex(c => c.start > t) : chants.filter(c => c.start < t).length - 1);
-  i = Math.max(0, Math.min(chants.length - 1, i)); following = true; player.seekTo(chants[i].start, true);
+  i = Math.max(0, Math.min(chants.length - 1, i)); following = true; player.seekTo(chants[i].start + songOffset(), true);
 };
 $('prevLine').onclick = () => jump(-1);
 $('nextLine').onclick = () => jump(1);
@@ -751,7 +846,9 @@ function tick(){
   if (ready && player.getCurrentTime){
     const t = player.getCurrentTime() || 0, d = player.getDuration() || 0;
     if (loop && A != null && B != null && t >= B) player.seekTo(A, true);
-    highlight(chants.findIndex((c,i) => cueActive(c,i,t)));
+    const ts = t - songOffset();
+    highlight(chants.findIndex((c,i) => cueActive(c,i,ts)));
+    if (chants.length) countdown(ts);
     if (lyricSecs.length) highlightSec(t);
     if (Math.abs(t - lastTickT) > .2){ lastTickT = t; $('tCur').textContent = mmss(t); $('tDur').textContent = mmss(d); if (d) $('seek').value = t / d * 100; }
   }
@@ -813,7 +910,7 @@ $('liveInput').addEventListener('keydown', e => {
   if (e.key === 'Escape'){ e.preventDefault(); togglePlay(); return; }
   if (e.key !== 'Enter' || e.isComposing) return;
   e.preventDefault(); const text = e.target.value.trim(); if (!text) return;
-  const start = Math.max(0, player.getCurrentTime() - 1.5);
+  const start = Math.max(0, player.getCurrentTime() - 1.5 - songOffset());
   const prev = chants.filter(c => c.start < start).pop();
   if (prev && prev.end > start) prev.end = Math.max(prev.start + .5, start - .1);
   const list = [...chants, {start, end:start+3.5, text}].sort((a,b)=>a.start-b.start);
@@ -830,7 +927,7 @@ function startMark(){
   say(`下一句：${markQueue[0].replace(/^!/,'')}`); player.seekTo(0); play();
 }
 function stamp(){
-  markTimes.push(player.getCurrentTime()); const i = markTimes.length;
+  markTimes.push(player.getCurrentTime() - songOffset()); const i = markTimes.length;
   if (i >= markQueue.length) return stopMark(true);
   say(`${i}/${markQueue.length}　下一句：${markQueue[i].replace(/^!/,'')}`);
 }
