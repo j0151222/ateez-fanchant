@@ -232,6 +232,10 @@ dialog a:hover{color:var(--accent)}
 .lyric-call{color:#dca6ff;font-weight:700}.lyric-name{color:#8fbcff;font-weight:700}.lyric-accent{color:#ff9f9f;font-weight:700}
 .script[data-size="s"] .lyrics-list{font-size:15px}.script[data-size="m"] .lyrics-list{font-size:18px}.script[data-size="l"] .lyrics-list{font-size:23px}
 .lyrics-note{margin:10px 0 0;font-size:12px;color:var(--sub)}
+/* 歌詞裡有 <strong>00:21.5</strong> 時間標記時，播放中跟著亮起並捲動 */
+.lyrics-list li.stamp{cursor:pointer}
+.lyrics-list li.cur{background:color-mix(in srgb,var(--accent) 12%,transparent);border-radius:8px;padding-left:8px;padding-right:8px}
+.lyrics-list li.done{opacity:.45}
 .script [hidden]{display:none!important}
 .bad-g{color:#b4e59a;font-weight:700}.bad-p{color:#ffb5d0;font-weight:700}.bad-y{color:#f3d990}
 </style>
@@ -562,11 +566,37 @@ $('favBtn').onclick = () => {
 };
 
 /* ---------- 應援稿面板 ---------- */
+/* 完整歌詞的時間段落：只有一行 <strong>mm:ss.s</strong> 的才算，從這行到下一個時間前是同一段 */
+const STAMP = /^<strong>(\d+:\d+(?:\.\d+)?)<\/strong>$/;
+let lyricSecs = [], curSec = -1;
 function renderFullLyrics(){
   const data = lyricsFor(S());
   $('fullLyrics').innerHTML = data ? data.lines.map(l => `<li>${l}</li>`).join('') : '';
   $('fullLyrics').scrollTop = 0;
+  lyricSecs = []; curSec = -1;
+  [...$('fullLyrics').children].forEach((li, i) => {
+    const m = (data.lines[i] || '').trim().match(STAMP); if (!m) return;
+    const t = toSec(m[1]); li.classList.add('stamp');
+    li.onclick = () => { if (ready){ player.seekTo(t, true); lyricPauseUntil = 0; } };
+    lyricSecs.push({ t, from: i });
+  });
 }
+function highlightSec(t){
+  const k = lyricSecs.filter(s => s.t <= t).length - 1;
+  if (k === curSec) return;
+  curSec = k;
+  const lis = [...$('fullLyrics').children], from = k >= 0 ? lyricSecs[k].from : -1, to = lyricSecs[k + 1]?.from ?? lis.length;
+  lis.forEach((li, i) => { li.classList.toggle('cur', i >= from && i < to); li.classList.toggle('done', from >= 0 && i < from); });
+  const ul = $('fullLyrics');
+  if (from >= 0 && !ul.hidden && Date.now() > lyricPauseUntil){
+    lyricAutoScroll = true;
+    ul.scrollTo({ top: ul.scrollTop + lis[from].getBoundingClientRect().top - ul.getBoundingClientRect().top - ul.clientHeight * 0.25 });
+    setTimeout(() => lyricAutoScroll = false, 600);
+  }
+}
+/* 自己捲動歌詞時，先停 4 秒不自動捲 */
+let lyricPauseUntil = 0, lyricAutoScroll = false;
+$('fullLyrics').addEventListener('scroll', () => { if (!lyricAutoScroll) lyricPauseUntil = Date.now() + 4000; });
 function updateScriptView(){
   const data = lyricsFor(S()), full = fullLyricsView && !!data;
   $('fullLyricsBtn').disabled = !data;
@@ -579,7 +609,8 @@ function updateScriptView(){
   $('scEmpty').hidden = full;
   $('timedControls').hidden = full;
   $('lyricsNote').textContent = full
-    ? `完整原歌詞＋應援／發音提示（非翻譯） · ${data.source || `PDF 第 ${data.page} 頁`}。彩色文字保留原稿標記；尚未標記同步時間。`
+    ? `完整原歌詞＋應援／發音提示（非翻譯） · ${data.source || `PDF 第 ${data.page} 頁`}。彩色文字保留原稿標記；`
+      + (lyricSecs.length ? '播放時會跟著時間亮起，點時間可跳到該段。' : '尚未標記同步時間。')
     : (data ? '同步應援稿可在下方編輯；完整歌詞請切換上方按鈕。' : '這首尚未提供完整歌詞。');
 }
 $('fullLyricsBtn').onclick = () => { fullLyricsView = true; updateScriptView(); };
@@ -713,6 +744,7 @@ function tick(){
     const t = player.getCurrentTime() || 0, d = player.getDuration() || 0;
     if (loop && A != null && B != null && t >= B) player.seekTo(A, true);
     highlight(chants.findIndex(c => t >= c.start && t < c.end));
+    if (lyricSecs.length) highlightSec(t);
     if (Math.abs(t - lastTickT) > .2){ lastTickT = t; $('tCur').textContent = mmss(t); $('tDur').textContent = mmss(d); if (d) $('seek').value = t / d * 100; }
   }
   requestAnimationFrame(tick);
