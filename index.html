@@ -429,7 +429,7 @@ dialog a:hover{color:var(--accent)}
 </dialog>
 
 <script src="https://www.youtube.com/iframe_api"></script>
-<script src="lyrics.js?v=3"></script>
+<script src="lyrics.js?v=4"></script>
 <script>
 /* ===== 網站預設歌單：把「複製歌單資料」的結果貼在這裡 ===== */
 const DEFAULT_SONGS = [
@@ -471,9 +471,17 @@ const toSec = s => { const p = s.split(':').map(Number); return p.length === 2 ?
 const fmt = t => `${String(Math.floor(t/60)).padStart(2,'0')}:${(t%60).toFixed(1).padStart(4,'0')}`;
 const mmss = t => `${Math.floor(t/60)}:${String(Math.floor(t%60)).padStart(2,'0')}`;
 const TIME = /^(\d+:\d+(?:\.\d+)?|\d+(?:\.\d+)?)\s+(\d+:\d+(?:\.\d+)?|\d+(?:\.\d+)?)\s+(.+)$/;
-const parse = txt => (txt||'').split('\n').map(l=>l.trim()).filter(Boolean).map(l=>l.match(TIME)).filter(Boolean)
-  .map(m=>({start:toSec(m[1]),end:toSec(m[2]),text:m[3]})).sort((a,b)=>a.start-b.start);
-const toText = list => list.map(c=>`${fmt(c.start)} ${fmt(c.end)} ${c.text}`).join('\n');
+const POINT_TIME = /^~(\d+:\d+(?:\.\d+)?)\s+(.+)$/;
+const parse = txt => (txt||'').split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{
+  const m = l.match(TIME); if (m) return {start:toSec(m[1]),end:toSec(m[2]),text:m[3]};
+  const p = l.match(POINT_TIME); return p ? {start:toSec(p[1]),end:null,text:p[2],approx:true} : null;
+}).filter(Boolean).sort((a,b)=>a.start-b.start);
+const toText = list => list.map(c=>c.approx ? `~${fmt(c.start)} ${c.text}` : `${fmt(c.start)} ${fmt(c.end)} ${c.text}`).join('\n');
+const cueActive = (c,i,t) => t >= c.start && t < (c.end ?? chants[i+1]?.start ?? c.start + 1);
+function timelineFor(s){
+  const data = lyricsFor(s);
+  return !s.tl || s.tl === data?.previousTimeline ? data?.timeline || s.tl || '' : s.tl;
+}
 function getVid(v){
   v = v || '';
   const m = v.match(/(?:v=|youtu\.be\/|shorts\/|embed\/|live\/)([\w-]{11})/);
@@ -546,7 +554,7 @@ function select(i){
   $('npEra').textContent = ERA_NAME[s.era||'other'] || '';
   $('ytLink').href = s.url || '#'; $('ytLink').style.display = s.url ? '' : 'none';
   $('favBtn').classList.toggle('on', state.favs.includes(s.title)); $('favBtn').textContent = state.favs.includes(s.title) ? '♥' : '♡';
-  $('fTitle').value = s.title; $('fAlbum').value = s.album||''; $('fEra').value = s.era||'other'; $('fUrl').value = s.url||''; $('tl').value = s.tl || lyricsFor(s)?.timeline || '';
+  $('fTitle').value = s.title; $('fAlbum').value = s.album||''; $('fEra').value = s.era||'other'; $('fUrl').value = s.url||''; $('tl').value = timelineFor(s);
   const v = getVid(s.url);
   $('cover').classList.remove('hide');
   $('cover').style.backgroundImage = v ? `url(https://i.ytimg.com/vi/${v.videoId}/hqdefault.jpg)` : 'none';
@@ -611,7 +619,7 @@ function updateScriptView(){
   $('lyricsNote').textContent = full
     ? `完整原歌詞＋應援／發音提示（非翻譯） · ${data.source || `PDF 第 ${data.page} 頁`}。彩色文字保留原稿標記；`
       + (lyricSecs.length ? '播放時會跟著時間亮起，點時間可跳到該段。' : '尚未標記同步時間。')
-    : (chants.length ? `已載入 ${chants.length} 段同步應援；播放時會亮起，點句子可跳轉。` : (data ? '同步應援稿可在下方編輯；完整歌詞請切換上方按鈕。' : '這首尚未提供完整歌詞。'));
+    : (chants.length ? `已載入 ${chants.length} 段同步應援；播放時會亮起，點句子可跳轉。約略時間的提示亮到下一段開始。` : (data ? '同步應援稿可在下方編輯；完整歌詞請切換上方按鈕。' : '這首尚未提供完整歌詞。'));
 }
 $('fullLyricsBtn').onclick = () => { fullLyricsView = true; updateScriptView(); };
 $('timedLyricsBtn').onclick = () => { fullLyricsView = false; updateScriptView(); };
@@ -623,7 +631,7 @@ function setChants(list){
   list.forEach((c,i) => {
     const li = document.createElement('li'), call = c.text.startsWith('!');
     li.className = 'line' + (call ? ' call' : '');
-    li.innerHTML = `<time>${mmss(c.start)}</time><span>${esc(c.text.replace(/^!/,''))}</span>`;
+    li.innerHTML = `<time>${c.approx ? "約 " : ""}${mmss(c.start)}</time><span>${esc(c.text.replace(/^!/,''))}</span>`;
     li.onclick = () => { if (ready){ player.seekTo(c.start, true); following = true; } };
     ul.appendChild(li);
   });
@@ -743,7 +751,7 @@ function tick(){
   if (ready && player.getCurrentTime){
     const t = player.getCurrentTime() || 0, d = player.getDuration() || 0;
     if (loop && A != null && B != null && t >= B) player.seekTo(A, true);
-    highlight(chants.findIndex(c => t >= c.start && t < c.end));
+    highlight(chants.findIndex((c,i) => cueActive(c,i,t)));
     if (lyricSecs.length) highlightSec(t);
     if (Math.abs(t - lastTickT) > .2){ lastTickT = t; $('tCur').textContent = mmss(t); $('tDur').textContent = mmss(d); if (d) $('seek').value = t / d * 100; }
   }
@@ -879,5 +887,6 @@ applyOverlay(); renderEras(); renderPractice(); select(Math.max(0, state.songs.f
 </script>
 </body>
 </html>
+
 
 
