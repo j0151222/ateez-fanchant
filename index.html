@@ -767,6 +767,7 @@ function applyOverlay(){ $('overlay').classList.toggle('off', !state.overlay); $
 
 /* ---------- 播放器 ---------- */
 function onYouTubeIframeAPIReady(){
+  if (player) return;
   player = new YT.Player('player', {
     playerVars:{ playsinline:1, fs:0, rel:0 },
     events:{
@@ -981,6 +982,8 @@ $('script').dataset.size = state.size;
 [...$('size').children].forEach(b => b.classList.toggle('on', b.dataset.s === state.size));
 $('autoNext').classList.toggle('on', state.autoNext);
 applyOverlay(); renderEras(); renderPractice(); select(Math.max(0, state.songs.findIndex(s => lyricsFor(s)))); tick();
+/* YouTube API 可能比這段程式早載好、錯過 onYouTubeIframeAPIReady，這時自己建立播放器 */
+if (window.YT && YT.loaded) onYouTubeIframeAPIReady();
 </script>
 </body>
 </html>
