@@ -429,7 +429,7 @@ dialog a:hover{color:var(--accent)}
 </dialog>
 
 <script src="https://www.youtube.com/iframe_api"></script>
-<script src="lyrics.js?v=2"></script>
+<script src="lyrics.js?v=3"></script>
 <script>
 /* ===== 網站預設歌單：把「複製歌單資料」的結果貼在這裡 ===== */
 const DEFAULT_SONGS = [
@@ -546,7 +546,7 @@ function select(i){
   $('npEra').textContent = ERA_NAME[s.era||'other'] || '';
   $('ytLink').href = s.url || '#'; $('ytLink').style.display = s.url ? '' : 'none';
   $('favBtn').classList.toggle('on', state.favs.includes(s.title)); $('favBtn').textContent = state.favs.includes(s.title) ? '♥' : '♡';
-  $('fTitle').value = s.title; $('fAlbum').value = s.album||''; $('fEra').value = s.era||'other'; $('fUrl').value = s.url||''; $('tl').value = s.tl||'';
+  $('fTitle').value = s.title; $('fAlbum').value = s.album||''; $('fEra').value = s.era||'other'; $('fUrl').value = s.url||''; $('tl').value = s.tl || lyricsFor(s)?.timeline || '';
   const v = getVid(s.url);
   $('cover').classList.remove('hide');
   $('cover').style.backgroundImage = v ? `url(https://i.ytimg.com/vi/${v.videoId}/hqdefault.jpg)` : 'none';
@@ -554,7 +554,7 @@ function select(i){
   if (ready && v) player.cueVideoById(v);
   A = B = null; loop = false; updateAB();
   renderFullLyrics();
-  setChants(parse(s.tl));
+  setChants(parse($('tl').value));
   renderSongs(); $('playBtn').textContent = '▶';
 }
 $('prevSong').onclick = () => select(cur - 1);
@@ -611,7 +611,7 @@ function updateScriptView(){
   $('lyricsNote').textContent = full
     ? `完整原歌詞＋應援／發音提示（非翻譯） · ${data.source || `PDF 第 ${data.page} 頁`}。彩色文字保留原稿標記；`
       + (lyricSecs.length ? '播放時會跟著時間亮起，點時間可跳到該段。' : '尚未標記同步時間。')
-    : (data ? '同步應援稿可在下方編輯；完整歌詞請切換上方按鈕。' : '這首尚未提供完整歌詞。');
+    : (chants.length ? `已載入 ${chants.length} 段同步應援；播放時會亮起，點句子可跳轉。` : (data ? '同步應援稿可在下方編輯；完整歌詞請切換上方按鈕。' : '這首尚未提供完整歌詞。'));
 }
 $('fullLyricsBtn').onclick = () => { fullLyricsView = true; updateScriptView(); };
 $('timedLyricsBtn').onclick = () => { fullLyricsView = false; updateScriptView(); };
@@ -879,4 +879,5 @@ applyOverlay(); renderEras(); renderPractice(); select(Math.max(0, state.songs.f
 </script>
 </body>
 </html>
+
 
