@@ -1029,7 +1029,7 @@ const FULL_LYRICS = {
     "(Give it, give it, give it) gotta make that",
     "money, make-"
   ]},
-  "BAD": { "source": "BAD 應援截圖（3 張）", "lines": [
+  "BAD": { "source": "BAD 應援截圖（3 張）", "timeline": "00:21.5 00:24.5 !에이티즈 골든아워（欸‧依‧梯‧子 勾‧燈‧凹‧五‧二）\n00:32.4 00:33.1 !YUP!\n00:34.6 00:35.3 !미소（咪‧搜）\n00:36.6 00:37.3 !halo（嘿‧囉）\n00:43.5 00:44.5 !Photoshop\n00:47.0 00:48.3 !She don't stop\n~00:50.0 !해（嘿）\n~00:52.1 !해（嘿）\n~00:54.3 !대（爹）\n~00:55.8 !대（爹）\n~00:56.6 !대（爹）\n00:57.8 00:59.6 !BAD BAD BAD BAD BAD BAD BAD\n01:00.8 01:01.5 !BAD\n01:03.0 01:05.0 !BAD BAD BAD BAD BAD BAD BAD\n01:06.2 01:07.0 !BAD\n01:15.1 01:15.8 !tigo（梯‧勾）\n01:19.1 01:19.8 !roso（囉‧搜）\n01:23.2 01:24.1 !뭐라고~?（摸‧拉‧勾～？）\n01:27.8 01:28.5 !BAD\n01:32.8 01:34.0 !member（手燈指向成員）\n01:38.5 01:39.4 !Cuban（Q‧本）\n01:48.5 01:49.5 !Fuego（夫‧欸‧勾）\n~01:49.5 !BAD BAD BAD BAD BAD BAD BAD\n~01:52.5 !BAD\n~01:55.0 !BAD BAD BAD BAD BAD BAD BAD\n~01:58.0 !BAD\n~02:00.5 !（歡呼！）\n~02:03.0 !BAD BAD BAD BAD BAD BAD BAD BAD\n~02:07.0 !BAD BAD BAD BAD BAD BAD BAD BAD\n~02:11.0 !BAD BAD BAD BAD BAD BAD BAD BAD\n~02:15.0 !BAD BAD BAD BAD BAD BAD BAD BAD\n~02:19.0 !에이티즈（欸‧依‧梯‧子）\n~02:21.0 !BAD\n~02:23.5 !BAD\n~02:27.0 !YEAH~\n~02:31.5 !GOOD~（Good～）\n~02:35.5 !김홍중 · 박성화 · 정윤호 · 강여상 · 최산 · 송민기 · 정우영 · 최종호 · 에이티즈\n~02:45.0 !YUP!\n~02:47.0 !BAD BAD BAD BAD\n~02:50.5 !에이티즈（欸‧依‧梯‧子）", "lines": [
     "<span class=\"bad-g\">에 이 티 즈 골 든 아 워</span>",
     "<span class=\"bad-g\">(欸一梯子 勾燈凹五二)</span>",
     "Your name stuck on my tongue",
