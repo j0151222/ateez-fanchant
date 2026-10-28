@@ -6,6 +6,7 @@
 1. 開始前先提醒使用者在 GitHub Desktop 按「Fetch origin / Pull」，拿到最新版本，不要用舊的 HTML 覆蓋。
 2. 只改使用者要求的部分，保留既有功能（包含別人加的）。
 3. 改完用中文簡短說明改了哪些地方，再提醒使用者到 GitHub Desktop Commit 和 Push。
+4. 分工（2026-10-28 起）：Claude 只在本機資料夾 `~/Documents/Claude ai/ATEEZ 應援` 改檔案，不 Commit、不 Push；GPT／Codex 在同一個資料夾檢查 `git diff` 後負責 Commit 和 Push。上傳時只上傳現有的修改，不要重寫或覆蓋檔案。
 
 ## 檔案
 - `index.html`：介面、功能、預設歌單（DEFAULT_SONGS）。
