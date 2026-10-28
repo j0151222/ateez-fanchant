@@ -456,7 +456,7 @@ dialog a:hover{color:var(--accent)}
 </dialog>
 
 <script src="https://www.youtube.com/iframe_api"></script>
-<script src="lyrics.js?v=4"></script>
+<script src="lyrics.js?v=5"></script>
 <script>
 /* ===== 網站預設歌單：把「複製歌單資料」的結果貼在這裡 ===== */
 const DEFAULT_SONGS = [
@@ -507,7 +507,8 @@ const toText = list => list.map(c=>c.approx ? `~${fmt(c.start)} ${c.text}` : `${
 const cueActive = (c,i,t) => t >= c.start && t < (c.end ?? chants[i+1]?.start ?? c.start + 1);
 function timelineFor(s){
   const data = lyricsFor(s);
-  return !s.tl || s.tl === data?.previousTimeline ? data?.timeline || s.tl || '' : s.tl;
+  /* previousTimeline 可以是字串或陣列：存的是舊版預設時間軸、沒自己改過的，就換成新版 */
+  return !s.tl || [].concat(data?.previousTimeline ?? []).includes(s.tl) ? data?.timeline || s.tl || '' : s.tl;
 }
 function getVid(v){
   v = v || '';
