@@ -1840,7 +1840,7 @@ const FULL_LYRICS = {
     "lines": [
       "<strong>ATEEZ — Adrenaline</strong>",
       "",
-      "影片基準：應援空耳版約 04:51.5",
+      "影片基準：目前官方應援影片；第一句 01:18（原空耳版約 03:35）",
       "",
       "標示：",
       "<small style=\"color:var(--sub)\">【中】中文意思</small>",
