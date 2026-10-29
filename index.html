@@ -602,8 +602,8 @@ $('favBtn').onclick = () => {
 };
 
 /* ---------- 應援稿面板 ---------- */
-/* 完整歌詞的時間段落：只有一行 <strong>mm:ss.s</strong> 的才算，從這行到下一個時間前是同一段 */
-const STAMP = /^<strong>(\d+:\d+(?:\.\d+)?)<\/strong>$/;
+/* 完整歌詞時間可附帶 small 範圍說明；每段到下一個時間行前結束。 */
+const STAMP = /^<strong>(\d+:\d+(?:\.\d+)?)<\/strong>(?:\s*<small>[^<]*<\/small>)?$/;
 let lyricSecs = [], curSec = -1;
 function renderFullLyrics(){
   const data = lyricsFor(S());
@@ -618,7 +618,7 @@ function renderFullLyrics(){
   });
 }
 function highlightSec(t){
-  const k = lyricSecs.filter(s => s.t <= t).length - 1;
+  const k = lyricSecs.reduce((best, s, i) => s.t <= t && (best < 0 || s.t >= lyricSecs[best].t) ? i : best, -1);
   if (k === curSec) return;
   curSec = k;
   const lis = [...$('fullLyrics').children], from = k >= 0 ? lyricSecs[k].from : -1, to = lyricSecs[k + 1]?.from ?? lis.length;
